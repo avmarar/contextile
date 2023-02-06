@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 export const Posts = ({ post }) => (
   <article className="post-excerpt">
