@@ -1,68 +1,49 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Contextile
 
-## Available Scripts
+Contextile is a responsive, private-first note canvas that blends text, imagery, and future audio snippets into a living mosaic. The current milestone focuses on establishing a Chakra UI foundation plus theming primitives so future UX work can iterate quickly.
 
-In the project directory, you can run:
+## Stack
+- **Vite + React 19 + TypeScript 5** for a fast, typed SPA workflow.
+- **Redux Toolkit** powers all async data flows (`posts` slice today, `notes` soon).
+- **React Router 7** routes between dashboard and data views.
+- **Chakra UI** provides layout primitives, color-mode handling, and the design token system defined in `src/theme`.
 
-### `npm start`
+## Getting Started
+1. Install dependencies: `npm install`.
+2. Start the dev server: `npm start` then visit `http://localhost:5173`.
+3. Build for production: `npm run build` (output goes to `dist/`).
+4. Preview a production build locally: `npm run preview`.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Current Routes
+- `/notes` – Notes dashboard fed by the placeholder JSONPlaceholder API.
+- `/notes/:noteId` – Detail view with read/edit affordance placeholders.
+- `/reminder`, `/todo` – Future surfaces with simple “coming soon” copy.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Design Foundations
+- Custom theme tokens live in `src/theme/index.ts` and are applied via `ChakraProvider` + `ColorModeScript` in `src/main.tsx`.
+- Branding (documented in `docs/DOCUMENTATION.md`):
+  - **Colors:** `brand.500 = #7740ff` with light/dark ramps defined for components.
+  - **Fonts:** `Work Sans` for headings, `Inter` for body and UI text.
+  - **Radii & Shadows:** `xl = 24px` for cards and a branded focus outline.
+- Legacy CSS resets were removed in favor of Chakra global styles to prevent specificity battles as the redesign progresses.
 
-### `npm test`
+## Project Layout
+```
+src/
+ ├─ actions/             # Redux action creators and async thunks
+ ├─ components/          # Presentational components (NavBar, NoteCard)
+ ├─ pages/               # Router-level screens (Notes, Note Detail, Reminder placeholder, etc.)
+ ├─ reducers/            # posts reducer + root reducer
+ ├─ store.ts             # Redux store configuration
+ ├─ theme/               # Chakra theme tokens + global styles
+ ├─ App.tsx              # Router shell
+ └─ main.tsx             # Entry point w/ providers
+```
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Roadmap Snapshot
+- Phase 1: Rename posts → notes domain, add data services, and introduce a `ui` slice for filters.
+- Phase 2: Ship the Chakra-based App Shell (header, nav tabs, filters, stats, theming toggle).
+- Phase 3: Build the rich Notes Grid + NoteCard variants with loading/error/empty states.
+- Phase 4+: Detail + creation flows, Supabase integration, motion polish, and testing.
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+See `docs/UX_Redesign_Implementation_Plan.md` for the full phased plan.
