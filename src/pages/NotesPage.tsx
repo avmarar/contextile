@@ -1,8 +1,7 @@
 import {
   Alert,
   AlertIcon,
-  Container,
-  Heading,
+  Button,
   Link as ChakraLink,
   Skeleton,
   Stack,
@@ -15,6 +14,9 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { fetchNotes } from "../actions/notesActions";
 import { NoteCard } from "../components/NoteCard";
+import { FiltersBar } from "../components/FiltersBar";
+import { AppShell } from "../components/AppShell";
+import { StatsPanel } from "../components/StatsPanel";
 import type { AppDispatch } from "../store";
 import type { RootState } from "../types";
 
@@ -84,13 +86,29 @@ const NotesPage: FC = () => {
     );
   }
 
+  const actions = (
+    <>
+      <Button variant="outline" borderRadius="xl">
+        Theme
+      </Button>
+      <Button colorScheme="brand" borderRadius="xl">
+        Create Note
+      </Button>
+    </>
+  );
+
   return (
-    <Container maxW="5xl" py={12}>
+    <AppShell
+      title="Notes"
+      description="Browse every captured thought across text, imagery, and audio. Use filters to zero in on the context you need."
+      actions={actions}
+      sidebar={<StatsPanel notes={items} />}
+    >
       <Stack spacing={6}>
-        <Heading size="lg">Notes</Heading>
+        <FiltersBar />
         {content}
       </Stack>
-    </Container>
+    </AppShell>
   );
 };
 
