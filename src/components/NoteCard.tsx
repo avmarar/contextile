@@ -38,6 +38,7 @@ export const NoteCard: FC<NoteCardProps> = ({
   const subtextColor = useColorModeValue("gray.600", "gray.300");
   const borderColor = useColorModeValue("blackAlpha.100", "whiteAlpha.200");
   const accentText = useColorModeValue("brand.600", "brand.300");
+  const audioBg = useColorModeValue("gray.50", "whiteAlpha.50");
 
   const handleAction =
     (callback?: (note: Note) => void) => (event: MouseEvent) => {
@@ -134,12 +135,27 @@ export const NoteCard: FC<NoteCardProps> = ({
               borderWidth="1px"
               borderColor={borderColor}
               p={4}
+              bg={audioBg}
             >
-              <Text fontWeight="semibold" color={accentText} mb={1}>
-                Audio placeholder
-              </Text>
-              <Text color={subtextColor} fontSize="sm">
-                Waveform visualization arrives in a future milestone.
+              <HStack justify="space-between" align="center" mb={3}>
+                <Text fontWeight="semibold" color={accentText}>
+                  Voice memo preview
+                </Text>
+                <Badge colorScheme="brand" variant="subtle">
+                  {formatTimestamp(note.createdAt)}
+                </Badge>
+              </HStack>
+              <Image
+                src="/waveform.svg"
+                alt="Waveform preview"
+                w="100%"
+                h="80px"
+                objectFit="cover"
+                borderRadius="lg"
+                backgroundColor="blackAlpha.800"
+              />
+              <Text color={subtextColor} fontSize="sm" mt={3}>
+                Tap to open this note and refine the transcript.
               </Text>
             </Box>
           ) : null}

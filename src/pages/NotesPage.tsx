@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import type { FC, ReactNode } from "react";
 import { useCallback, useEffect, useMemo } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchNotes } from "../actions/notesActions";
@@ -35,6 +35,7 @@ const NotesPage: FC = () => {
   const createModal = useDisclosure();
   const columns = useBreakpointValue({ base: 1, md: 2, xl: 3 }) ?? 1;
   const toast = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     void dispatch(fetchNotes());
@@ -62,6 +63,15 @@ const NotesPage: FC = () => {
   const handleQuickAction = useCallback((action: string, note: Note) => {
     console.info(`[notes:${action}]`, note.id);
   }, []);
+
+  const handleEditNote = useCallback(
+    (note: Note) => {
+      navigate(`/notes/${note.id}`, {
+        state: { startInEditMode: true },
+      });
+    },
+    [navigate]
+  );
 
   const renderMasonryContent = (children: ReactNode) => (
     <Box
@@ -98,7 +108,7 @@ const NotesPage: FC = () => {
           <NoteCard
             note={note}
             onPin={() => handleQuickAction("pin", note)}
-            onEdit={() => handleQuickAction("edit", note)}
+            onEdit={() => handleEditNote(note)}
             onDelete={() => handleQuickAction("delete", note)}
           />
         </ChakraLink>

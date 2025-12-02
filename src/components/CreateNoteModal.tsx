@@ -21,8 +21,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import type { FC, FormEvent } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Note } from "../types";
+import { FiMic, FiUpload } from "react-icons/fi";
 
 type CreateNoteModalProps = {
   isOpen: boolean;
@@ -48,6 +49,26 @@ export const CreateNoteModal: FC<CreateNoteModalProps> = ({
   const toast = useToast();
   const [form, setForm] = useState(defaultForm);
   const [submitting, setSubmitting] = useState(false);
+  const imageUploadRef = useRef<HTMLInputElement>(null);
+  const audioUploadRef = useRef<HTMLInputElement>(null);
+
+  const triggerPlaceholderUpload = (type: "image" | "audio") => {
+    const ref = type === "image" ? imageUploadRef.current : audioUploadRef.current;
+    ref?.click();
+  };
+
+  const handleUploadSelected = (type: "image" | "audio") => {
+    toast({
+      status: "info",
+      title: `${type === "image" ? "Image" : "Audio"} upload placeholder`,
+      description:
+        "File support will hook into Supabase soon. For now, paste a link manually.",
+    });
+    const ref = type === "image" ? imageUploadRef.current : audioUploadRef.current;
+    if (ref) {
+      ref.value = "";
+    }
+  };
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -82,6 +103,20 @@ export const CreateNoteModal: FC<CreateNoteModalProps> = ({
         <ModalHeader>Create Note</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
+          <input
+            type="file"
+            accept="image/*"
+            ref={imageUploadRef}
+            style={{ display: "none" }}
+            onChange={() => handleUploadSelected("image")}
+          />
+          <input
+            type="file"
+            accept="audio/*"
+            ref={audioUploadRef}
+            style={{ display: "none" }}
+            onChange={() => handleUploadSelected("audio")}
+          />
           <Tabs
             index={["text", "image", "audio"].indexOf(form.type)}
             onChange={(index) =>
@@ -151,6 +186,14 @@ export const CreateNoteModal: FC<CreateNoteModalProps> = ({
                     placeholder="https://"
                   />
                 </FormControl>
+                <Button
+                  mt={4}
+                  variant="outline"
+                  leftIcon={<FiUpload />}
+                  onClick={() => triggerPlaceholderUpload("image")}
+                >
+                  Upload image (placeholder)
+                </Button>
                 <FormControl mt={4}>
                   <FormLabel>Description</FormLabel>
                   <Textarea
@@ -187,6 +230,14 @@ export const CreateNoteModal: FC<CreateNoteModalProps> = ({
                     placeholder="Add context for your audio clip"
                   />
                 </FormControl>
+                <Button
+                  mt={4}
+                  variant="outline"
+                  leftIcon={<FiMic />}
+                  onClick={() => triggerPlaceholderUpload("audio")}
+                >
+                  Upload audio (placeholder)
+                </Button>
                 <Box mt={4} fontSize="sm" color="gray.500">
                   Audio uploads will hook into Supabase in Phase 5. For now, jot
                   down what you captured.
