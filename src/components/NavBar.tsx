@@ -1,14 +1,19 @@
 import {
   Box,
   Circle,
+  Collapse,
   Container,
   Flex,
   HStack,
+  IconButton,
   Link as ChakraLink,
+  Stack,
   Text,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import type { FC } from "react";
+import { useEffect } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 const links = [
@@ -19,10 +24,16 @@ const links = [
 
 export const NavBar: FC = () => {
   const location = useLocation();
+  const { isOpen, onToggle, onClose } = useDisclosure();
   const borderColor = useColorModeValue("blackAlpha.100", "whiteAlpha.200");
   const bg = useColorModeValue("white", "gray.900");
   const activeBg = useColorModeValue("brand.50", "whiteAlpha.200");
   const activeColor = useColorModeValue("brand.600", "brand.200");
+  const toggleColor = useColorModeValue("gray.600", "gray.200");
+
+  useEffect(() => {
+    onClose();
+  }, [location.pathname, onClose]);
 
   const isActive = (link: typeof links[number]) => {
     if (link.match) {
@@ -30,6 +41,29 @@ export const NavBar: FC = () => {
     }
     return location.pathname === link.to;
   };
+
+  const linkItems = () =>
+    links.map(link => (
+      <ChakraLink
+        as={RouterLink}
+        key={link.to}
+        to={link.to}
+        px={4}
+        py={2}
+        rounded="lg"
+        fontWeight="semibold"
+        color={isActive(link) ? activeColor : undefined}
+        bg={isActive(link) ? activeBg : "transparent"}
+        _hover={{
+          textDecoration: "none",
+          bg: activeBg,
+          color: activeColor,
+        }}
+        display="block"
+      >
+        {link.label}
+      </ChakraLink>
+    ));
 
   return (
     <Box as="header" borderBottomWidth="1px" borderColor={borderColor} bg={bg}>
@@ -43,29 +77,29 @@ export const NavBar: FC = () => {
               Contextile
             </Text>
           </HStack>
-          <HStack spacing={2}>
-            {links.map(link => (
-              <ChakraLink
-                as={RouterLink}
-                key={link.to}
-                to={link.to}
-                px={4}
-                py={2}
-                rounded="lg"
-                fontWeight="semibold"
-                color={isActive(link) ? activeColor : undefined}
-                bg={isActive(link) ? activeBg : "transparent"}
-                _hover={{
-                  textDecoration: "none",
-                  bg: activeBg,
-                  color: activeColor,
-                }}
-              >
-                {link.label}
-              </ChakraLink>
-            ))}
+          <HStack spacing={2} display={{ base: "none", md: "flex" }}>
+            {linkItems()}
           </HStack>
+          <IconButton
+            aria-label={isOpen ? "Close navigation" : "Open navigation"}
+            onClick={onToggle}
+            icon={<Box as="span" fontSize="xl">{isOpen ? "×" : "☰"}</Box>}
+            variant="ghost"
+            display={{ base: "inline-flex", md: "none" }}
+            color={toggleColor}
+          />
         </Flex>
+        <Collapse in={isOpen} animateOpacity>
+          <Stack
+            spacing={2}
+            py={4}
+            display={{ md: "none" }}
+            borderTopWidth="1px"
+            borderColor={borderColor}
+          >
+            {linkItems()}
+          </Stack>
+        </Collapse>
       </Container>
     </Box>
   );
