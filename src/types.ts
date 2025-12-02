@@ -1,34 +1,63 @@
-export type Post = {
-  userId: number;
+import type { ThunkAction } from "@reduxjs/toolkit";
+import type { AnyAction } from "redux";
+
+export type NoteType = "text" | "image" | "audio";
+
+export type Note = {
   id: number;
+  type: NoteType;
   title: string;
   body: string;
+  mediaUrl?: string | null;
+  createdAt: string;
+  tags: string[];
 };
 
-export type GetPostsAction = {
-  type: "GET_POSTS";
+export type GetNotesAction = {
+  type: "GET_NOTES";
 };
 
-export type GetPostsSuccessAction = {
-  type: "GET_POSTS_SUCCESS";
-  payload: Post[];
+export type GetNotesSuccessAction = {
+  type: "GET_NOTES_SUCCESS";
+  payload: Note[];
 };
 
-export type GetPostsFailureAction = {
-  type: "GET_POSTS_FAILURE";
+export type GetNotesFailureAction = {
+  type: "GET_NOTES_FAILURE";
 };
 
-export type PostsAction =
-  | GetPostsAction
-  | GetPostsSuccessAction
-  | GetPostsFailureAction;
+export type NotesAction =
+  | GetNotesAction
+  | GetNotesSuccessAction
+  | GetNotesFailureAction;
 
-export type PostsState = {
-  posts: Post[];
+export type NotesState = {
+  items: Note[];
   loading: boolean;
   hasErrors: boolean;
 };
 
-export type RootState = {
-  posts: PostsState;
+export type NoteTypeFilter = "all" | NoteType;
+export type SortOrder = "newest" | "oldest";
+export type ThemePreference = "system" | "light" | "dark";
+
+export type UiState = {
+  filters: {
+    searchQuery: string;
+    type: NoteTypeFilter;
+    sortOrder: SortOrder;
+  };
+  theme: ThemePreference;
 };
+
+export type RootState = {
+  notes: NotesState;
+  ui: UiState;
+};
+
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  AnyAction
+>;

@@ -5,9 +5,12 @@ import {
   Button,
   Container,
   Heading,
+  Image,
   SkeletonText,
   Stack,
   Text,
+  Wrap,
+  WrapItem,
   useColorModeValue,
 } from "@chakra-ui/react";
 import type { FC, ReactNode } from "react";
@@ -15,7 +18,7 @@ import { useEffect } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchPosts } from "../actions/postsActions";
+import { fetchNotes } from "../actions/notesActions";
 import type { AppDispatch } from "../store";
 import type { RootState } from "../types";
 
@@ -23,17 +26,17 @@ const NoteDetailPage: FC = () => {
   const { noteId } = useParams<{ noteId: string }>();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const { posts, loading, hasErrors } = useSelector(
-    (state: RootState) => state.posts
+  const { items, loading, hasErrors } = useSelector(
+    (state: RootState) => state.notes
   );
   const subtextColor = useColorModeValue("gray.600", "gray.300");
-  const note = posts.find(entry => entry.id === Number(noteId));
+  const note = items.find(entry => entry.id === Number(noteId));
 
   useEffect(() => {
-    if (!posts.length) {
-      void dispatch(fetchPosts());
+    if (!items.length) {
+      void dispatch(fetchNotes());
     }
-  }, [dispatch, posts.length]);
+  }, [dispatch, items.length]);
 
   let body: ReactNode;
   if (loading && !note) {
@@ -60,7 +63,36 @@ const NoteDetailPage: FC = () => {
     body = (
       <Stack spacing={4}>
         <Heading size="lg">{note.title}</Heading>
+        <Text fontSize="sm" color={subtextColor}>
+          {note.type.toUpperCase()} ·{" "}
+          {new Date(note.createdAt).toLocaleString(undefined, {
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </Text>
+        {note.mediaUrl ? (
+          <Box borderRadius="xl" overflow="hidden">
+            <Image
+              src={note.mediaUrl}
+              alt={note.title}
+              objectFit="cover"
+              w="100%"
+              maxH="360px"
+            />
+          </Box>
+        ) : null}
         <Text color={subtextColor}>{note.body}</Text>
+        <Wrap spacing={2}>
+          {note.tags.map(tag => (
+            <WrapItem key={`${note.id}-${tag}`}>
+              <Button size="xs" variant="outline">
+                {tag}
+              </Button>
+            </WrapItem>
+          ))}
+        </Wrap>
         <Box>
           <Button colorScheme="brand" borderRadius="xl" mr={3}>
             Edit Note
