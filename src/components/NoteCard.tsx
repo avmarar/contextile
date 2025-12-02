@@ -5,16 +5,22 @@ import {
   CardBody,
   Heading,
   HStack,
+  IconButton,
   Image,
   Stack,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import type { FC } from "react";
+import { motion } from "framer-motion";
+import type { FC, MouseEvent } from "react";
+import { FiBookmark, FiEdit2, FiTrash2 } from "react-icons/fi";
 import type { Note } from "../types";
 
 type NoteCardProps = {
   note: Note;
+  onPin?: (note: Note) => void;
+  onEdit?: (note: Note) => void;
+  onDelete?: (note: Note) => void;
 };
 
 const formatTimestamp = (value: string) =>
@@ -23,48 +29,126 @@ const formatTimestamp = (value: string) =>
     day: "numeric",
   });
 
-export const NoteCard: FC<NoteCardProps> = ({ note }) => {
+export const NoteCard: FC<NoteCardProps> = ({
+  note,
+  onDelete,
+  onEdit,
+  onPin,
+}) => {
   const subtextColor = useColorModeValue("gray.600", "gray.300");
   const borderColor = useColorModeValue("blackAlpha.100", "whiteAlpha.200");
+  const accentText = useColorModeValue("brand.600", "brand.300");
+
+  const handleAction =
+    (callback?: (note: Note) => void) => (event: MouseEvent) => {
+      event.preventDefault();
+      event.stopPropagation();
+      callback?.(note);
+    };
 
   return (
-    <Card
-      borderRadius="xl"
-      borderWidth="1px"
-      borderColor={borderColor}
-      shadow="sm"
-      role="group"
-      transition="all 0.2s ease"
-      _hover={{
-        shadow: "md",
-        transform: "translateY(-2px)",
-      }}
+    <motion.div
+      whileHover={{ y: -4 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+      style={{ position: "relative" }}
     >
-      <CardBody>
-        <Stack spacing={3}>
-          <HStack justify="space-between">
+      <Card
+        borderRadius="2xl"
+        borderWidth="1px"
+        borderColor={borderColor}
+        shadow="sm"
+        role="group"
+        transition="all 0.2s ease"
+        _hover={{
+          shadow: "xl",
+          transform: "translateY(-4px)",
+        }}
+      >
+        <CardBody>
+        <Stack spacing={4}>
+          <HStack justify="space-between" align="flex-start">
             <Badge colorScheme="purple" textTransform="capitalize">
               {note.type}
             </Badge>
-            <Text fontSize="xs" color={subtextColor}>
-              {formatTimestamp(note.createdAt)}
-            </Text>
+            <HStack
+              spacing={1}
+              opacity={{ base: 1, md: 0 }}
+              _groupHover={{ opacity: 1 }}
+            >
+              <IconButton
+                aria-label="Pin note"
+                icon={<FiBookmark />}
+                size="sm"
+                variant="ghost"
+                onClick={handleAction(onPin)}
+              />
+              <IconButton
+                aria-label="Edit note"
+                icon={<FiEdit2 />}
+                size="sm"
+                variant="ghost"
+                onClick={handleAction(onEdit)}
+              />
+              <IconButton
+                aria-label="Delete note"
+                icon={<FiTrash2 />}
+                size="sm"
+                variant="ghost"
+                colorScheme="red"
+                onClick={handleAction(onDelete)}
+              />
+            </HStack>
           </HStack>
 
-          {note.mediaUrl ? (
-            <Box borderRadius="lg" overflow="hidden">
+          {note.type === "image" && note.mediaUrl ? (
+            <Box borderRadius="2xl" overflow="hidden" position="relative">
               <Image
                 src={note.mediaUrl}
                 alt={note.title}
                 objectFit="cover"
                 w="100%"
-                h="160px"
+                h="200px"
+                transition="transform 0.3s ease"
+                _groupHover={{ transform: "scale(1.02)" }}
               />
+              <Box
+                position="absolute"
+                inset={0}
+                bgGradient="linear(to-t, blackAlpha.700, transparent)"
+                display="flex"
+                alignItems="flex-end"
+                p={4}
+              >
+                <Text color="white" fontWeight="semibold">
+                  Tap to reveal details
+                </Text>
+              </Box>
+            </Box>
+          ) : null}
+
+          {note.type === "audio" ? (
+            <Box
+              borderRadius="xl"
+              borderWidth="1px"
+              borderColor={borderColor}
+              p={4}
+            >
+              <Text fontWeight="semibold" color={accentText} mb={1}>
+                Audio placeholder
+              </Text>
+              <Text color={subtextColor} fontSize="sm">
+                Waveform visualization arrives in a future milestone.
+              </Text>
             </Box>
           ) : null}
 
           <Stack spacing={2}>
             <Heading size="md">{note.title}</Heading>
+            <Text fontSize="sm" color={subtextColor}>
+              {formatTimestamp(note.createdAt)}
+            </Text>
             <Text color={subtextColor} noOfLines={4}>
               {note.body}
             </Text>
@@ -72,13 +156,14 @@ export const NoteCard: FC<NoteCardProps> = ({ note }) => {
 
           <HStack spacing={2} flexWrap="wrap">
             {note.tags.map(tag => (
-              <Badge key={`${note.id}-${tag}`} variant="outline" colorScheme="gray">
+              <Badge key={`${note.id}-${tag}`} variant="subtle" colorScheme="gray">
                 {tag}
               </Badge>
             ))}
           </HStack>
         </Stack>
-      </CardBody>
-    </Card>
+        </CardBody>
+      </Card>
+    </motion.div>
   );
 };

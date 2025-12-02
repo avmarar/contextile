@@ -1,4 +1,13 @@
-import { Heading, Stack, Stat, StatHelpText, StatLabel, StatNumber, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  SimpleGrid,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
+  useColorModeValue,
+} from "@chakra-ui/react";
 import type { FC } from "react";
 import type { Note } from "../types";
 
@@ -21,19 +30,23 @@ export const StatsPanel: FC<StatsPanelProps> = ({ notes }) => {
   }, {});
 
   return (
-    <Stack spacing={4}>
-      <Heading size="sm">Notes Overview</Heading>
-      <Stat>
-        <StatLabel>Total Notes</StatLabel>
-        <StatNumber>{total}</StatNumber>
-        <StatHelpText color={subtextColor}>Across all types</StatHelpText>
-      </Stat>
-      {statsConfig.map(entry => (
-        <Stat key={entry.key}>
-          <StatLabel>{entry.label}</StatLabel>
-          <StatNumber>{counts[entry.key]}</StatNumber>
+    <Box>
+      <Heading size="sm" mb={3}>
+        Notes Overview
+      </Heading>
+      <SimpleGrid columns={{ base: 1, sm: 2 }} spacing={4}>
+        <Stat>
+          <StatLabel>Total Notes</StatLabel>
+          <StatNumber>{total}</StatNumber>
+          <StatHelpText color={subtextColor}>Across all types</StatHelpText>
         </Stat>
-      ))}
-    </Stack>
+        {statsConfig.map(entry => (
+          <Stat key={entry.key}>
+            <StatLabel>{entry.label}</StatLabel>
+            <StatNumber>{counts[entry.key]}</StatNumber>
+          </Stat>
+        ))}
+      </SimpleGrid>
+    </Box>
   );
 };

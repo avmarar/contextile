@@ -1,14 +1,13 @@
 import {
   Box,
-  Circle,
   Collapse,
   Container,
   Flex,
   HStack,
   IconButton,
+  Image,
   Link as ChakraLink,
   Stack,
-  Text,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -17,7 +16,11 @@ import { useEffect } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 
 const links = [
-  { to: "/notes", label: "Notes", match: (path: string) => path.startsWith("/notes") },
+  {
+    to: "/notes",
+    label: "Notes",
+    match: (path: string) => path.startsWith("/notes"),
+  },
   { to: "/reminder", label: "Reminder" },
   { to: "/todo", label: "To-do" },
 ];
@@ -35,7 +38,7 @@ export const NavBar: FC = () => {
     onClose();
   }, [location.pathname, onClose]);
 
-  const isActive = (link: typeof links[number]) => {
+  const isActive = (link: (typeof links)[number]) => {
     if (link.match) {
       return link.match(location.pathname);
     }
@@ -43,7 +46,7 @@ export const NavBar: FC = () => {
   };
 
   const linkItems = () =>
-    links.map(link => (
+    links.map((link) => (
       <ChakraLink
         as={RouterLink}
         key={link.to}
@@ -70,12 +73,7 @@ export const NavBar: FC = () => {
       <Container maxW="6xl">
         <Flex align="center" justify="space-between" py={4}>
           <HStack spacing={3}>
-            <Circle size="36px" bg="brand.500" color="white" fontWeight="bold">
-              C
-            </Circle>
-            <Text fontWeight="bold" color={useColorModeValue("gray.900", "white")} fontSize="lg">
-              Contextile
-            </Text>
+            <Image src="/contextile.svg" alt="Contextile logo" height="40px" />
           </HStack>
           <HStack spacing={2} display={{ base: "none", md: "flex" }}>
             {linkItems()}
@@ -83,7 +81,11 @@ export const NavBar: FC = () => {
           <IconButton
             aria-label={isOpen ? "Close navigation" : "Open navigation"}
             onClick={onToggle}
-            icon={<Box as="span" fontSize="xl">{isOpen ? "×" : "☰"}</Box>}
+            icon={
+              <Box as="span" fontSize="xl">
+                {isOpen ? "×" : "☰"}
+              </Box>
+            }
             variant="ghost"
             display={{ base: "inline-flex", md: "none" }}
             color={toggleColor}
