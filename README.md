@@ -1,49 +1,130 @@
-# Contextile
+# Contextile — Private Multimodal Notes
 
-Contextile is a responsive, private-first note canvas that blends text, imagery, and future audio snippets into a living mosaic. The current milestone focuses on establishing a Chakra UI foundation plus theming primitives so future UX work can iterate quickly.
+![Contextile](https://img.shields.io/badge/Status-In%20Progress-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+![Chakra%20UI](https://img.shields.io/badge/Chakra_UI-319795?logo=chakraui&logoColor=white)
+![Redux%20Toolkit](https://img.shields.io/badge/Redux%20Toolkit-764ABC?logo=redux&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
 
-## Stack
-- **Vite + React 19 + TypeScript 5** for a fast, typed SPA workflow.
-- **Redux Toolkit** powers all async data flows (`posts` slice today, `notes` soon).
-- **React Router 7** routes between dashboard and data views.
-- **Chakra UI** provides layout primitives, color-mode handling, and the design token system defined in `src/theme`.
+Contextile is a responsive, private-first note canvas that blends text, imagery, and (soon) audio into a living mosaic. The redesign introduces a Chakra-based shell, multimodal card grid, optimistic create/edit flows, and the branding system behind the new logo.
 
-## Getting Started
-1. Install dependencies: `npm install`.
-2. Start the dev server: `npm start` then visit `http://localhost:5173`.
-3. Build for production: `npm run build` (output goes to `dist/`).
-4. Preview a production build locally: `npm run preview`.
+---
 
-### Current Routes
-- `/notes` – Notes dashboard fed by the placeholder JSONPlaceholder API.
-- `/notes/:noteId` – Detail view with read/edit affordance placeholders.
-- `/reminder`, `/todo` – Future surfaces with simple “coming soon” copy.
+## Features
 
-## Design Foundations
-- Custom theme tokens live in `src/theme/index.ts` and are applied via `ChakraProvider` + `ColorModeScript` in `src/main.tsx`.
-- Branding (documented in `docs/DOCUMENTATION.md`):
-  - **Colors:** `brand.500 = #7740ff` with light/dark ramps defined for components.
-  - **Fonts:** `Work Sans` for headings, `Inter` for body and UI text.
-  - **Radii & Shadows:** `xl = 24px` for cards and a branded focus outline.
-- Legacy CSS resets were removed in favor of Chakra global styles to prevent specificity battles as the redesign progresses.
+- **Multimodal Notes** – Text, image, and placeholder audio cards with tags, quick actions, and motion-driven hover states.
+- **Optimistic Create/Edit** – Tabbed `CreateNoteModal` and a responsive drawer/modal for editing, powered by Redux state.
+- **Filters & Stats** – Search, type chips, sort control, and a stats panel summarizing counts per note type.
+- **Theme Toggle** – Light/dark modes synchronized with Chakra UI and persisted via the `ui` slice.
+- **Foundation for Supabase** – Mock API layer mimics Supabase responses; stubs are in place for future persistence.
+- **Testing & Tooling** – Vitest + React Testing Library cover filters, cards, and modal interactions.
 
-## Project Layout
+---
+
+## Tech Stack
+
+- **Language:** TypeScript.
+- **Frameworks:** React 19, Vite 7, React Router 7.
+- **UI:** Chakra UI with custom tokens aligned to the Contextile palette.
+- **State:** Redux Toolkit (notes + ui slices).
+- **Animations:** Framer Motion for card entrance/hover.
+- **Testing:** Vitest, @testing-library/react, jsdom.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 20+
+
+### Installation
+
+```bash
+git clone https://github.com/<your-handle>/contextile.git
+cd contextile
+npm install
+npm start          # dev server → http://localhost:5173
+```
+
+### Scripts
+
+```bash
+npm test           # Vitest suite
+npm run build      # Production bundle in /build
+npm run preview    # Serve production bundle locally
+```
+
+---
+
+## Project Structure
+
 ```
 src/
- ├─ actions/             # Redux action creators and async thunks
- ├─ components/          # Presentational components (NavBar, NoteCard)
- ├─ pages/               # Router-level screens (Notes, Note Detail, Reminder placeholder, etc.)
- ├─ reducers/            # posts reducer + root reducer
- ├─ store.ts             # Redux store configuration
- ├─ theme/               # Chakra theme tokens + global styles
- ├─ App.tsx              # Router shell
- └─ main.tsx             # Entry point w/ providers
+ ├─ actions/          # Async thunks (fetchNotes)
+ ├─ components/       # NavBar, AppShell, NoteCard, ThemeToggle, etc.
+ ├─ pages/            # Notes grid, Note detail drawer, Reminder/Todo placeholders
+ ├─ reducers/         # notes + ui slices
+ ├─ services/         # notesApi mock service
+ ├─ store.ts          # Redux store configuration
+ ├─ theme/            # Chakra theme tokens
+ ├─ testUtils.tsx     # RTL helpers
+ └─ main.tsx          # Entry point with providers
 ```
 
-## Roadmap Snapshot
-- Phase 1: Rename posts → notes domain, add data services, and introduce a `ui` slice for filters.
-- Phase 2: Ship the Chakra-based App Shell (header, nav tabs, filters, stats, theming toggle).
-- Phase 3: Build the rich Notes Grid + NoteCard variants with loading/error/empty states.
-- Phase 4+: Detail + creation flows, Supabase integration, motion polish, and testing.
+---
 
-See `docs/UX_Redesign_Implementation_Plan.md` for the full phased plan.
+## Architecture Overview
+
+| Layer        | Description                                                                                                |
+| ------------ | ---------------------------------------------------------------------------------------------------------- |
+| **UI Shell** | AppShell + NavBar wrap each route with the Contextile logo, actions, and optional sidebar.                 |
+| **State**    | `notes` slice holds data with optimistic updates; `ui` slice stores filters and theme preference.          |
+| **Data**     | `services/notesApi.ts` transforms JSONPlaceholder posts into the richer note model.                        |
+| **UX Flow**  | Masonry/grid hybrid ensures responsive card layout; detail drawer reuses the same data and syncs to Redux. |
+| **Testing**  | Vitest covers filters, card quick actions, and modal submissions.                                          |
+
+---
+
+## Environment Variables
+
+Today’s milestone uses mock data, so no env vars are required. Future Supabase integration will introduce:
+
+| Variable                 | Purpose                               |
+| ------------------------ | ------------------------------------- |
+| `VITE_SUPABASE_URL`      | Supabase project URL                  |
+| `VITE_SUPABASE_ANON_KEY` | Public anon key for client operations |
+
+---
+
+## Roadmap Snapshot
+
+| Phase   | Status | Highlights                                                                  |
+| ------- | ------ | --------------------------------------------------------------------------- |
+| Phase 1 | ✅     | Notes domain, services abstraction, `ui` slice for filters/theme.           |
+| Phase 2 | ✅     | App shell, filters bar, stats panel, logo nav, theme toggle.                |
+| Phase 3 | ✅     | Masonry grid, NoteCard variants, skeletons, hover actions.                  |
+| Phase 4 | ✅     | Create modal, detail drawer/modal with optimistic updates.                  |
+| Phase 5 | ✅     | Responsive polish, Framer Motion, Vitest coverage, brand palette alignment. |
+| Phase 6 | ⏳     | Supabase persistence, media upload, drag-and-drop, collaboration.           |
+
+See `docs/UX_Redesign_Implementation_Plan.md` for the full plan.
+
+---
+
+## Contributing
+
+1. Fork and clone the repo.
+2. `npm install && npm start`
+3. Create a feature branch: `git checkout -b feat/your-feature`
+4. Keep code clean: `npm run lint && npm test`
+5. Open a PR with screenshots if the UI changes.
+
+Please align with the roadmap before starting major features.
+
+---
+
+## License
+
+MIT © Contextile contributors.

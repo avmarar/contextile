@@ -39,7 +39,7 @@ export type NotesState = {
 
 export type NoteTypeFilter = "all" | NoteType;
 export type SortOrder = "newest" | "oldest";
-export type ThemePreference = "system" | "light" | "dark";
+export type ThemePreference = "light" | "dark";
 
 export type UiState = {
   filters: {
