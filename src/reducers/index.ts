@@ -1,8 +1,10 @@
 import { combineReducers } from "redux";
-import postsReducer from "./postsReducer";
+import notesReducer from "./notesReducer";
+import uiReducer from "./uiReducer";
 
 const rootReducer = combineReducers({
-  posts: postsReducer,
+  notes: notesReducer,
+  ui: uiReducer,
 });
 
 export default rootReducer;
