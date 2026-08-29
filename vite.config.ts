@@ -8,10 +8,26 @@ export default defineConfig(() => {
       chunkSizeWarningLimit: 900,
       rollupOptions: {
         output: {
-          manualChunks: {
-            chakra: ["@chakra-ui/react", "@emotion/react", "@emotion/styled"],
-            redux: ["react-redux", "@reduxjs/toolkit"],
-            router: ["react-router-dom"],
+          manualChunks(id) {
+            if (
+              id.includes("@chakra-ui/react") ||
+              id.includes("@emotion/react") ||
+              id.includes("@emotion/styled")
+            ) {
+              return "chakra";
+            }
+            if (
+              id.includes("react-redux") ||
+              id.includes("@reduxjs/toolkit")
+            ) {
+              return "redux";
+            }
+            if (
+              id.includes("react-router-dom") ||
+              id.includes("react-router")
+            ) {
+              return "router";
+            }
           },
         },
       },
